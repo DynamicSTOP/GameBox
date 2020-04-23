@@ -1,11 +1,13 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, session } = require('electron')
+const { app, ipcMain, BrowserWindow, session } = require('electron')
 const path = require('path')
+
+let mainWindow
 
 function createWindow () {
   const ses = session.fromPartition('persist:name')
 
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
@@ -27,7 +29,6 @@ function createWindow () {
 
   // Open the DevTools for devs.
   if (process.env.NODE_ENV === 'development') {
-    require('vue-devtools').install()
     mainWindow.webContents.openDevTools()
   }
 }
@@ -49,6 +50,16 @@ app.on('activate', function () {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) createWindow()
+})
+
+ipcMain.on('async-renderer-message', (event, message) => {
+  console.log('message', message)
+  if (mainWindow) {
+    mainWindow.send('async-main-message', JSON.stringify({
+      sender: 'main',
+      mes: 'main got your message!'
+    }))
+  }
 })
 
 // TODO whitelist urls based on plugins
