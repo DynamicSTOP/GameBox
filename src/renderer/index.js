@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import App from '@/App.vue'
+import store from '@/store'
+import router from '@/router'
 
 function receiveMessage (event) {
   if (event.data) {
@@ -14,16 +16,14 @@ function receiveMessage (event) {
 }
 
 window.addEventListener('message', receiveMessage, false)
-
 window.postMessage(JSON.stringify({
   sender: 'renderer',
   mes: 'hello from rendererrrr!'
 }))
-console.log('message sent')
 
 new Vue({
   components: { App },
-  // router,
-  // store,
+  router,
+  store,
   template: '<App/>'
 }).$mount('#app')

@@ -7,7 +7,5 @@ export default {
 </script>
 
 <template>
-  <div>
-    Hello, i am vue!
-  </div>
+  <div><router-view /></div>
 </template>

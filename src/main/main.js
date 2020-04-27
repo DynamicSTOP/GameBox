@@ -18,8 +18,11 @@ function createWindow () {
       enableRemoteModule: true,
       session: ses
     },
-    frame: false
+    titleBarStyle: 'hidden',
+    title: 'GameBox'
+    // frame: false
   })
+  mainWindow.removeMenu()
 
   const winURL = process.env.NODE_ENV === 'development'
     ? 'http://localhost:9080'
@@ -59,6 +62,9 @@ ipcMain.on('async-renderer-message', (event, message) => {
       sender: 'main',
       mes: 'main got your message!'
     }))
+    // dialog.showOpenDialogSync(mainWindow, {
+    //   properties: ['openDirectory']
+    // })
   }
 })
 
