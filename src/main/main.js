@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, ipcMain, BrowserWindow, session } = require('electron')
+const { app, ipcMain, globalShortcut, BrowserWindow, session } = require('electron')
 const path = require('path')
 
 let mainWindow
@@ -38,10 +38,14 @@ function createWindow () {
 
 app.allowRendererProcessReuse = true
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow)
+app.on('ready', () => {
+  globalShortcut.register('CommandOrControl+Shift+K', () => {
+    if (mainWindow && mainWindow.webContents) {
+      mainWindow.webContents.openDevTools()
+    }
+  })
+  createWindow()
+})
 
 app.on('window-all-closed', function () {
   // On macOS it is common for applications and their menu bar

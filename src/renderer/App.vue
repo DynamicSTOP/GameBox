@@ -1,11 +1,20 @@
 <script>
 import '@/scss/main.scss'
+import { mapGetters } from 'vuex'
 
 export default {
-  name: 'App'
+  name: 'App',
+  computed: {
+    ...mapGetters(['isLoading'])
+  }
 }
 </script>
 
 <template>
-  <div><router-view /></div>
+  <div>
+    <div v-if="isLoading">
+      Loading...
+    </div>
+    <router-view />
+  </div>
 </template>
