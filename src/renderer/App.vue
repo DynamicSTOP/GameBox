@@ -6,6 +6,9 @@ export default {
   name: 'App',
   computed: {
     ...mapGetters(['isLoading'])
+  },
+  created () {
+    this.$store.dispatch('REQUEST_CONFIG')
   }
 }
 </script>

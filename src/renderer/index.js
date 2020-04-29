@@ -3,24 +3,6 @@ import App from '@/App.vue'
 import store from '@/store'
 import router from '@/router'
 
-function receiveMessage (event) {
-  if (event.data) {
-    try {
-      const data = JSON.parse(event.data)
-      if (data.sender === 'main') {
-        console.log('renderer', data)
-      }
-    } catch (e) {
-    }
-  }
-}
-
-window.addEventListener('message', receiveMessage, false)
-window.postMessage(JSON.stringify({
-  sender: 'renderer',
-  mes: 'hello from rendererrrr!'
-}))
-
 new Vue({
   components: { App },
   router,

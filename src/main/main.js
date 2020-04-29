@@ -1,50 +1,12 @@
 // Modules to control application life and create native browser window
-const { app, ipcMain, globalShortcut, BrowserWindow, session } = require('electron')
-const path = require('path')
-
-let mainWindow
-
-function createWindow () {
-  const ses = session.fromPartition('persist:name')
-
-  mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    webPreferences: {
-      preload: path.resolve(__dirname, '..', 'preload', 'preload.js'),
-      nodeIntegration: false,
-      nodeIntegrationInWorker: false,
-      contextIsolation: true,
-      enableRemoteModule: true,
-      session: ses
-    },
-    titleBarStyle: 'hidden',
-    title: 'GameBox'
-    // frame: false
-  })
-  mainWindow.removeMenu()
-
-  const winURL = process.env.NODE_ENV === 'development'
-    ? 'http://localhost:9080'
-    : `file://${__dirname}/index.html`
-
-  mainWindow.loadURL(winURL)
-
-  // Open the DevTools for devs.
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.webContents.openDevTools()
-  }
-}
+import MainWindow from './MainWindow'
+import { app, BrowserWindow } from 'electron'
+const mainWindow = new MainWindow()
 
 app.allowRendererProcessReuse = true
 
 app.on('ready', () => {
-  globalShortcut.register('CommandOrControl+Shift+K', () => {
-    if (mainWindow && mainWindow.webContents) {
-      mainWindow.webContents.openDevTools()
-    }
-  })
-  createWindow()
+  mainWindow.create()
 })
 
 app.on('window-all-closed', function () {
@@ -56,20 +18,7 @@ app.on('window-all-closed', function () {
 app.on('activate', function () {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
-})
-
-ipcMain.on('async-renderer-message', (event, message) => {
-  console.log('message', message)
-  if (mainWindow) {
-    mainWindow.send('async-main-message', JSON.stringify({
-      sender: 'main',
-      mes: 'main got your message!'
-    }))
-    // dialog.showOpenDialogSync(mainWindow, {
-    //   properties: ['openDirectory']
-    // })
-  }
+  if (BrowserWindow.getAllWindows().length === 0) mainWindow.create()
 })
 
 // TODO whitelist urls based on plugins
