@@ -8,11 +8,19 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     loadingMainConfig: true,
-    config: {}
+    config: {
+      plugins: []
+    }
   },
   getters: {
     isLoading (state) {
       return state.loadingMainConfig
+    },
+    plugins (state) {
+      if (state.config.plugins) {
+        return state.config.plugins
+      }
+      return []
     }
   },
   mutations: {
@@ -24,6 +32,9 @@ const store = new Vuex.Store({
   actions: {
     CONFIG_REQUEST (context) {
       sendMessageToMain('CONFIG_REQUEST')
+    },
+    PLUGIN_ADD (context) {
+      sendMessageToMain('PLUGIN_ADD')
     }
   }
 })

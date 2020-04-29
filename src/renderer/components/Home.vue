@@ -1,6 +1,6 @@
 <script>
-import PluginsList from '@/components/PluginsList.vue'
-import TopBar from '@/components/TopBar.vue'
+import PluginsList from '@/components/PluginsList'
+import TopBar from '@/components/TopBar'
 
 export default {
   name: 'Home',

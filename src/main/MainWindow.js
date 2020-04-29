@@ -1,4 +1,4 @@
-import { ipcMain, globalShortcut, BrowserWindow, session } from 'electron'
+import { ipcMain, dialog, globalShortcut, BrowserWindow, session } from 'electron'
 import path from 'path'
 
 class MainWindow {
@@ -61,6 +61,9 @@ class MainWindow {
           case 'CONFIG_REQUEST':
             this.loadConfig()
             break
+          case 'PLUGIN_ADD':
+            this.addPlugin()
+            break
           default:
             if (this._debug) {
               console.log('message from renderer', type, data)
@@ -95,6 +98,13 @@ class MainWindow {
     }
 
     this.sendToRenderer('CONFIG_LOADED', Object.assign({}, defaultConfig, loadedConfig))
+  }
+
+  addPlugin () {
+    console.log(dialog.showOpenDialogSync(this._window, {
+      title: 'Select plugin folder',
+      properties: ['openDirectory']
+    }))
   }
 }
 

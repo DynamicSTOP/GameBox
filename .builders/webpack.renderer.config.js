@@ -107,7 +107,8 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, '..', 'src', 'renderer'),
       'vue$': 'vue/dist/vue.esm.js'
-    }
+    },
+    extensions: ['.js', '.vue', '.json', '.css']
   },
   optimization: {
     noEmitOnErrors: true

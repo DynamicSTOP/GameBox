@@ -1,3 +1,32 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   background: #ccc;
+}
+
+.PluginsList {
+  display: flex;
+  flex-direction: column;
+
+  $item-size: 100px;
+
+  div.item {
+    display: flex;
+    width: $item-size;
+    height: $item-size;
+    margin: 5px;
+    border: 2px solid #000;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 3px 3px 2px #5f5f5f;
+    background: #ddd;
+
+    &:hover{
+      background: rgba(0,0,0,0.1);
+    }
+  }
 }
