@@ -12,18 +12,30 @@ export class MessageParser {
   }
 
   subscribe () {
-    window.addEventListener('message', this.receiveMessage, false)
+    window.addEventListener('message', this.receiveMessage.bind(this), false)
   }
 
   receiveMessage (event) {
     if (event.data) {
+      let data = {}
       try {
-        const data = JSON.parse(event.data)
-        if (data.sender === 'main') {
-          console.log('renderer', data)
-        }
+        data = JSON.parse(event.data)
       } catch (e) {
       }
+      if (data.sender === 'main') {
+        this.parseMessage(data)
+      }
+    }
+  }
+
+  parseMessage (message) {
+    switch (message.type) {
+      case 'CONFIG_LOADED':
+        this.store.commit('CONFIG_UPDATE', message.data)
+        break
+      default:
+        console.error('unknown message type', message)
+        break
     }
   }
 }

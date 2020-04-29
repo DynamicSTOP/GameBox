@@ -8,7 +8,7 @@ export default {
     ...mapGetters(['isLoading'])
   },
   created () {
-    this.$store.dispatch('REQUEST_CONFIG')
+    this.$store.dispatch('CONFIG_REQUEST')
   }
 }
 </script>
@@ -18,6 +18,6 @@ export default {
     <div v-if="isLoading">
       Loading...
     </div>
-    <router-view />
+    <router-view v-else />
   </div>
 </template>

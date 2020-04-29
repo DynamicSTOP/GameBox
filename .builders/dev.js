@@ -106,11 +106,6 @@ function startRenderer () {
     // rendererConfig.entry.renderer = [path.join(__dirname, 'dev-client')].concat(rendererConfig.entry.renderer)
     rendererConfig.mode = 'development'
 
-    // rendererConfig.devServer = {
-    //   contentBase: path.resolve(__dirname,'..','dist'),
-    //   hot: true,
-    // }
-
     const compiler = webpack(rendererConfig)
 
     compiler.hooks.done.tap('done', stats => {
@@ -122,7 +117,7 @@ function startRenderer () {
       {
         contentBase: path.join(__dirname, '../', 'dist'),
         quiet: true,
-        hot: true,
+        // hot: true,
         proxy: {
           '/background.js': {
             secure:false,

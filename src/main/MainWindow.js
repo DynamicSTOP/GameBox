@@ -58,7 +58,7 @@ class MainWindow {
         const json = JSON.parse(message)
         const { data, type } = json
         switch (type) {
-          case 'REQUEST_CONFIG':
+          case 'CONFIG_REQUEST':
             this.loadConfig()
             break
           default:
@@ -94,7 +94,7 @@ class MainWindow {
       c: 15
     }
 
-    this.sendToRenderer('LOADED_CONFIG', Object.assign({}, defaultConfig, loadedConfig))
+    this.sendToRenderer('CONFIG_LOADED', Object.assign({}, defaultConfig, loadedConfig))
   }
 }
 

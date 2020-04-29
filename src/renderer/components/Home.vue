@@ -1,9 +1,19 @@
 <script>
+import PluginsList from '@/components/PluginsList.vue'
+import TopBar from '@/components/TopBar.vue'
+
 export default {
-  name: 'Home'
+  name: 'Home',
+  components: {
+    TopBar,
+    PluginsList
+  }
 }
 </script>
 
 <template>
-  <div>home</div>
+  <div>
+    <top-bar />
+    <plugins-list />
+  </div>
 </template>

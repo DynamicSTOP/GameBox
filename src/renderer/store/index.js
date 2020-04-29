@@ -7,17 +7,23 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    loadingMainConfig: true
+    loadingMainConfig: true,
+    config: {}
   },
   getters: {
     isLoading (state) {
       return state.loadingMainConfig
     }
   },
+  mutations: {
+    CONFIG_UPDATE (state, config) {
+      state.config = config
+      state.loadingMainConfig = false
+    }
+  },
   actions: {
-    REQUEST_CONFIG (context) {
-      console.log('sending request')
-      sendMessageToMain('REQUEST_CONFIG')
+    CONFIG_REQUEST (context) {
+      sendMessageToMain('CONFIG_REQUEST')
     }
   }
 })
