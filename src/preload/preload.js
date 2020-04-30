@@ -1,6 +1,6 @@
 (function () {
   console.log('Preload loaded')
-  const { ipcRenderer, remote } = require('electron')
+  const { ipcRenderer } = require('electron')
 
   ipcRenderer.on('async-main-message', (event, message) => {
     console.log('preloader passing message from main')
