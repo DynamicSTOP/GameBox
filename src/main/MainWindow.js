@@ -1,10 +1,16 @@
 import { ipcMain, dialog, globalShortcut, BrowserWindow, session } from 'electron'
 import path from 'path'
+import fs from 'fs'
+
+const configPath = path.resolve('./', 'config.json')
 
 class MainWindow {
   constructor () {
     this._window = null
     this._debug = process.env.NODE_ENV === 'development'
+    this._config = {
+      plugins: []
+    }
   }
 
   create () {
@@ -88,23 +94,60 @@ class MainWindow {
   }
 
   loadConfig () {
-    const defaultConfig = {
-      a: 5,
-      b: 10
+    let loadedConfig = {}
+    try {
+      loadedConfig = JSON.parse(fs.readFileSync(configPath, { encoding: 'UTF8' }))
+    } catch (e) {
     }
-    const loadedConfig = {
-      a: 10,
-      c: 15
-    }
+    this._config = Object.assign({}, this._config, loadedConfig)
+    this.sendConfigToRenderer()
+  }
 
-    this.sendToRenderer('CONFIG_LOADED', Object.assign({}, defaultConfig, loadedConfig))
+  saveConfig () {
+    return fs.writeFileSync(configPath, JSON.stringify(this._config), { encoding: 'UTF8' })
+  }
+
+  sendConfigToRenderer () {
+    this.sendToRenderer('CONFIG_LOADED', this._config)
   }
 
   addPlugin () {
-    console.log(dialog.showOpenDialogSync(this._window, {
+    const paths = dialog.showOpenDialogSync(this._window, {
       title: 'Select plugin folder',
       properties: ['openDirectory']
-    }))
+    })
+
+    // if select directory canceled
+    if (typeof paths === 'undefined') {
+      return
+    }
+
+    const pluginPath = paths[0]
+
+    // if current app directory was selected
+    if (path.resolve('./') === pluginPath) {
+      return
+    }
+
+    // if that plugin already loaded
+    if (this._config.plugins.filter((p) => p.path === pluginPath).length > 0) {
+      return
+    }
+
+    // if there is no plugin config in that folder
+    const pluginConfigPath = path.resolve(pluginPath, '/', 'plugin.json')
+    if (!fs.existsSync(pluginConfigPath)) {
+      return
+    }
+
+    try {
+      let pluginConfig = JSON.parse(fs.readFileSync(pluginConfigPath))
+      pluginConfig = Object.assign({}, pluginConfig, { path: pluginPath })
+      this._config.plugins.push(pluginConfig)
+      this.saveConfig()
+      this.sendConfigToRenderer()
+    } catch (e) {
+    }
   }
 }
 
