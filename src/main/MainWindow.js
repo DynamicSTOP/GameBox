@@ -14,6 +14,12 @@ class MainWindow {
   }
 
   create () {
+    this.attachHotkeys()
+    this.attachMessenger()
+    this.openStartWindow()
+  }
+
+  openStartWindow () {
     const ses = session.fromPartition('persist:MainWindow')
 
     this._window = new BrowserWindow({
@@ -31,6 +37,7 @@ class MainWindow {
       title: 'GameBox'
       // frame: false
     })
+
     this._window.removeMenu()
 
     const winURL = this._debug
@@ -43,9 +50,6 @@ class MainWindow {
     if (this._debug) {
       this._window.webContents.openDevTools()
     }
-
-    this.attachHotkeys()
-    this.attachMessenger()
   }
 
   attachHotkeys () {
