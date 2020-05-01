@@ -25,13 +25,19 @@ export default {
       if (confirm(`Reload ${this.plugin.shortname} plugin settings?`)) {
         this.$store.dispatch('PLUGIN_RELOAD_CONFIG', this.plugin)
       }
+    },
+    startPlugin () {
+      alert(`starting ${this.plugin.name}...`)
     }
   }
 }
 </script>
 
 <template>
-  <div class="plugin">
+  <div
+    class="plugin"
+    @click="startPlugin"
+  >
     <div class="shortname">
       {{ plugin.shortname }}
     </div>
@@ -39,6 +45,7 @@ export default {
       <div
         class="item"
         title="Open settings"
+        @click.stop="openSettings"
       >
         S
       </div>
@@ -46,14 +53,14 @@ export default {
         <div
           class="item"
           title="Reload config"
-          @click="reloadPlugin"
+          @click.stop="reloadPlugin"
         >
           R
         </div>
         <div
           class="item"
           title="Remove from list"
-          @click="removePlugin"
+          @click.stop="removePlugin"
         >
           D
         </div>
