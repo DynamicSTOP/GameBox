@@ -75,6 +75,15 @@ class MainWindow {
           case 'PLUGIN_ADD':
             this.addPlugin()
             break
+          case 'PLUGIN_DELETE':
+            this.deletePlugin(data)
+            break
+          case 'PLUGIN_REMOVE':
+            this.removePlugin(data)
+            break
+          case 'PLUGIN_RELOAD_CONFIG':
+            this.reloadPlugin(data)
+            break
           default:
             if (this._debug) {
               console.log('message from renderer', type, data)
@@ -120,7 +129,10 @@ class MainWindow {
     const paths = dialog.showOpenDialogSync(this._window, {
       title: 'Select plugin.json',
       defaultPath: path.resolve('./', 'plugins'),
-      filters: [{ name: 'plugin.json', extensions: ['json'] }],
+      filters: [{
+        name: 'plugin.json',
+        extensions: ['json']
+      }],
       properties: ['openFile']
     })
 
@@ -144,6 +156,35 @@ class MainWindow {
       this.sendConfigToRenderer()
     } catch (e) {
     }
+  }
+
+  reloadPlugin (plugin) {
+    let pluginJSON = {}
+    try {
+      pluginJSON = JSON.parse(fs.readFileSync(plugin.path))
+    } catch (e) {
+      console.error(e)
+    }
+    this._config.plugins = this._config.plugins.map((p) => {
+      if (p.name === plugin.name) {
+        return Object.assign(pluginJSON, plugin)
+      }
+      return p
+    })
+    this.saveConfig()
+    this.sendConfigToRenderer()
+  }
+
+  // just removes from config
+  removePlugin (plugin) {
+    this._config.plugins = this._config.plugins.filter((p) => p.name !== plugin.name)
+    this.saveConfig()
+    this.sendConfigToRenderer()
+  }
+
+  // deletes all plugin files as well
+  deletePlugin (plugin) {
+    this.sendConfigToRenderer()
   }
 }
 

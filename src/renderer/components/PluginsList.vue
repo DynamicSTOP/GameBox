@@ -18,6 +18,7 @@ export default {
       v-for="plugin in plugins"
       :key="'plugin_'+plugin.name"
       class="item"
+      :plugin="plugin"
     />
     <add-plugin
       class="item"

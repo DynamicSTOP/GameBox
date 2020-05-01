@@ -35,6 +35,15 @@ const store = new Vuex.Store({
     },
     PLUGIN_ADD (context) {
       sendMessageToMain('PLUGIN_ADD')
+    },
+    PLUGIN_DELETE (context, plugin) {
+      sendMessageToMain('PLUGIN_DELETE', plugin)
+    },
+    PLUGIN_REMOVE (context, plugin) {
+      sendMessageToMain('PLUGIN_REMOVE', plugin)
+    },
+    PLUGIN_RELOAD_CONFIG (context, plugin) {
+      sendMessageToMain('PLUGIN_RELOAD_CONFIG', plugin)
     }
   }
 })
