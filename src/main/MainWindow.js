@@ -16,6 +16,7 @@ class MainWindow {
   create () {
     this.attachHotkeys()
     this.attachMessenger()
+    this.loadConfig()
     this.openStartWindow()
   }
 
@@ -69,7 +70,7 @@ class MainWindow {
         const { data, type } = json
         switch (type) {
           case 'CONFIG_REQUEST':
-            this.loadConfig()
+            this.sendConfigToRenderer()
             break
           case 'PLUGIN_ADD':
             this.addPlugin()
@@ -117,37 +118,28 @@ class MainWindow {
 
   addPlugin () {
     const paths = dialog.showOpenDialogSync(this._window, {
-      title: 'Select plugin folder',
-      properties: ['openDirectory']
+      title: 'Select plugin.json',
+      defaultPath: path.resolve('./', 'plugins'),
+      filters: [{ name: 'plugin.json', extensions: ['json'] }],
+      properties: ['openFile']
     })
 
-    // if select directory canceled
+    // if dialog canceled
     if (typeof paths === 'undefined') {
       return
     }
 
-    const pluginPath = paths[0]
+    const pluginJSONPath = paths[0]
 
-    // if current app directory was selected
-    if (path.resolve('./') === pluginPath) {
-      return
-    }
-
-    // if that plugin already loaded
-    if (this._config.plugins.filter((p) => p.path === pluginPath).length > 0) {
-      return
-    }
-
-    // if there is no plugin config in that folder
-    const pluginConfigPath = path.resolve(pluginPath, '/', 'plugin.json')
-    if (!fs.existsSync(pluginConfigPath)) {
+    // if selected plugin already loaded
+    if (this._config.plugins.filter((p) => p.path === pluginJSONPath).length > 0) {
       return
     }
 
     try {
-      let pluginConfig = JSON.parse(fs.readFileSync(pluginConfigPath))
-      pluginConfig = Object.assign({}, pluginConfig, { path: pluginPath })
-      this._config.plugins.push(pluginConfig)
+      let pluginJSON = JSON.parse(fs.readFileSync(pluginJSONPath))
+      pluginJSON = Object.assign({}, pluginJSON, { path: pluginJSONPath })
+      this._config.plugins.push(pluginJSON)
       this.saveConfig()
       this.sendConfigToRenderer()
     } catch (e) {
