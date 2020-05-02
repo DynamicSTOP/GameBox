@@ -44,6 +44,9 @@ const store = new Vuex.Store({
     },
     PLUGIN_RELOAD_CONFIG (context, plugin) {
       sendMessageToMain('PLUGIN_RELOAD_CONFIG', plugin)
+    },
+    PLUGIN_START (context, plugin) {
+      sendMessageToMain('PLUGIN_START', plugin)
     }
   }
 })

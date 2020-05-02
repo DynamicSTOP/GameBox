@@ -27,7 +27,7 @@ export default {
       }
     },
     startPlugin () {
-      alert(`starting ${this.plugin.name}...`)
+      this.$store.dispatch('PLUGIN_START', this.plugin)
     }
   }
 }

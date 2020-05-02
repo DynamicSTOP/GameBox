@@ -1,0 +1,22 @@
+{
+  "name": "google_example",
+  "shortname": "google",
+  "cookies": [
+    {
+      "name": "test_cookie",
+      "value": "1",
+      "domain": "google.com",
+      "path": "/"
+    }
+  ],
+  "preload" : {
+    "js" : {
+      "safe": [
+        "./preload/script.js"
+      ]
+    }
+  },
+  "cache": true,
+  "gamePage": "https://google.com",
+  "pluginPage": "./test.html"
+}
