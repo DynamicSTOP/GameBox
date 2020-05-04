@@ -1,0 +1,30 @@
+{
+  "name": "test_example",
+  "shortname": "test",
+  "cookies": [
+    {
+      "name": "test_cookie",
+      "value": "1",
+      "domain": "kc-db.info",
+      "path": "/"
+    }
+  ],
+  "preload": {
+    "injectJS": [
+      "./inject/script.js"
+    ]
+  },
+  "windows": {
+    "default": {
+      "mode": "single",
+      "position": "TL",
+      "width": 400,
+      "height": 200,
+      "margin": 0
+    }
+  },
+  "network": true,
+  "cache": true,
+  "gamePage": "https://kc-db.info/test/index.html",
+  "pluginPage": "./test.html"
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    html, body {
+      background: #EEE;
+      color: #000;
+      font-size: 20px;
+    }
+
+    .white {
+      background: #FFF;
+    }
+  </style>
+  <script>
+    console.log('this is native line in head block of the page')
+    console.log('foo is', window.foo)
+    window.foo = 'foo'
+    console.log('foo is', window.foo)
+
+    function pageIsReady () {
+      console.log('this is document ready in head block of the page', window.foo)
+      document.querySelector('#foo').innerHTML = window.foo
+
+      Array.from(document.querySelectorAll('p')).map(p => {
+        p.onclick = () => {
+          p.classList.contains('white') ? p.classList.remove('white') : p.classList.add('white')
+        }
+      })
+
+      const oReq = new XMLHttpRequest()
+      function requestFinished () {
+        console.log('page callback for XMLHttpRequest load event')
+        document.querySelector('#data').innerHTML = oReq.response
+      }
+      oReq.addEventListener('load', requestFinished)
+      oReq.open('GET', './data.json')
+      oReq.send()
+    }
+
+    document.addEventListener('DOMContentLoaded', pageIsReady)
+  </script>
+  <script src="./script.js"></script>
+</head>
+<body>
+<p id="foo"></p>
+<p id="data"></p>
+
+<p>Aptent dis rutrum elit congue orci praesent integer eu dolor, velit proin. Arcu est condimentum duis suspendisse
+  proin quisque class auctor. Convallis est dui ridiculus scelerisque rutrum venenatis gravida magna varius. Consequat
+  nullam libero lorem dictum mus tempor nullam erat montes himenaeos eu. Sapien netus primis consectetur urna quis sit
+  sagittis felis nisl arcu. Rhoncus ipsum ante ut nibh praesent euismod. Ad molestie eget eu. Vestibulum placerat
+  imperdiet fringilla. Consequat auctor at dui?</p>
+
+<p id="content">Fermentum magna eros ultrices consectetur bibendum faucibus convallis porta purus, suspendisse mattis.
+  Habitasse
+  nullam dolor vulputate velit ornare maecenas mollis et. Conubia condimentum eu facilisi ligula torquent sociosqu augue
+  class! Metus praesent malesuada fringilla laoreet placerat! Mus conubia eros nisl lectus nec? Tincidunt praesent
+  taciti cursus euismod turpis taciti. Elementum aptent nulla suscipit sit magna rutrum inceptos placerat egestas.
+  Posuere quisque orci neque placerat maecenas. Vehicula luctus ultricies pretium quisque?</p>
+
+<p>Tempor aliquam nostra dapibus venenatis. Consequat fames porttitor sit lacus vivamus scelerisque mi duis. Ultricies
+  vehicula ut ultrices ultricies. Lacus nunc faucibus orci egestas. Lacinia ultrices nam mus tempus elementum et
+  blandit. Adipiscing dapibus nisl auctor bibendum suspendisse eu. Suscipit sociis cum venenatis cursus auctor? Nostra
+  eget aliquam lobortis dictum sem etiam conubia cursus rutrum donec dolor platea? Sagittis.</p>
+
+<p>Vestibulum nisl placerat tincidunt suscipit per potenti lorem. Elit quam fermentum porta suscipit lobortis litora
+  ipsum tempor varius magna. Taciti dapibus massa etiam condimentum ullamcorper, sollicitudin cras. Porta congue
+  adipiscing per placerat montes, vulputate in tristique tempor sodales metus auctor! At malesuada magnis habitasse
+  dolor fusce scelerisque placerat porta nostra. Neque.</p>
+
+<p>Hac est diam aliquet lobortis mus volutpat commodo. Phasellus curabitur eget at. Nascetur nam curae; velit orci.
+  Litora maecenas placerat cubilia viverra urna consectetur ultrices vestibulum dui imperdiet amet himenaeos! Aptent est
+  eleifend non iaculis consequat quam bibendum. Inceptos condimentum dignissim hac vulputate dui lectus phasellus hac.
+  Luctus sociosqu mi lobortis potenti torquent bibendum! Pretium aptent fusce sit vestibulum quis praesent habitasse
+  elit rutrum. Blandit, potenti curae; est purus augue parturient malesuada vulputate sapien ultricies. Mi tortor
+  dignissim sapien viverra litora maecenas senectus molestie ultricies sodales. Ac et cubilia fusce. Placerat habitant
+  dictumst eleifend pellentesque.</p>
+</body>
+</html>

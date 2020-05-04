@@ -19,13 +19,29 @@
       }
     }
   }
+
   window.addEventListener('message', receiveMessageForMain, false)
+
+  const jsPaths = ipcRenderer.sendSync('sync-renderer-message', JSON.stringify({
+    seder: 'renderer',
+    type: 'PRELOADER_GAME_LOADED',
+    data: {
+      foo: window.foo || null
+    }
+  }))
 
   function pageIsReady () {
     ipcRenderer.send('async-renderer-message', JSON.stringify({
       seder: 'renderer',
-      type: 'PRELOADER_PLUGIN_DOM_READY'
+      type: 'PRELOADER_GAME_DOM_READY'
     }))
+
+    jsPaths.map((p) => {
+      const script = document.createElement('script')
+      script.innerHTML = p
+      document.head.prepend(script)
+    })
   }
+
   document.addEventListener('DOMContentLoaded', pageIsReady)
 })()

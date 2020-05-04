@@ -13,6 +13,7 @@ class MainWindow {
     }
 
     this._gameView = null
+    this._pluginView = null
     this._currentPlugin = null
   }
 
@@ -60,15 +61,28 @@ class MainWindow {
     globalShortcut.register('CommandOrControl+Shift+F12', () => {
       if (this._gameView !== null) {
         this._gameView.webContents.openDevTools()
-      } else if (this._window && this._window.webContents) {
+      }
+      if (this._pluginView !== null) {
+        this._pluginView.webContents.openDevTools()
+      }
+      if (this._window && this._window.webContents) {
         this._window.webContents.openDevTools()
       }
     })
 
     globalShortcut.register('CommandOrControl+Shift+K', () => {
       if (this._gameView !== null) {
+        this._window.removeBrowserView(this._gameView)
         this._gameView.destroy()
         this._gameView = null
+        this._currentPlugin = null
+      }
+
+      // TODO ask for destroy, then kill
+      if (this._pluginView !== null) {
+        this._window.removeBrowserView(this._pluginView)
+        this._pluginView.destroy()
+        this._pluginView = null
         this._currentPlugin = null
       }
     })
@@ -118,8 +132,13 @@ class MainWindow {
       case 'PLUGIN_START':
         this.startPlugin(data)
         break
-      case 'PRELOADER_LOADED':
-        console.log(data)
+      case 'PRELOADER_GAME_DOM_READY':
+        console.log('PRELOADER_GAME_DOM_READY')
+        break
+      case 'PRELOADER_PLUGIN_DOM_READY':
+        setTimeout(() => {
+          this.startGame()
+        }, 5000)
         break
       default:
         if (this._debug) {
@@ -135,8 +154,8 @@ class MainWindow {
 
   parseSyncMessageFromRenderer (type, data) {
     switch (type) {
-      case 'PRELOADER_LOADED':
-        return this._currentPlugin.preload.js.safe.map((p) => {
+      case 'PRELOADER_GAME_LOADED':
+        return this._currentPlugin.preload.injectJS.map((p) => {
           let jsContent = ''
           try {
             jsContent = fs.readFileSync(path.resolve(this._currentPlugin.path, p), { encoding: 'UTF-8' }).toString()
@@ -248,32 +267,83 @@ class MainWindow {
 
   // start plugin
   startPlugin (plugin) {
-    const ses = session.fromPartition(`persist:gameView_${plugin.name}`)
+    const ses = session.fromPartition(`persist:plugin_${plugin.name}`)
 
     this._currentPlugin = plugin
-    this._gameView = new BrowserView({
+
+    this._pluginView = new BrowserView({
       webPreferences: {
         preload: path.resolve(__dirname, '..', 'preload', 'preload_plugin.js'),
         nodeIntegration: false,
         nodeIntegrationInWorker: false,
         contextIsolation: true,
         enableRemoteModule: true,
-        session: ses
+        session: ses,
+        webviewTag: true
       }
     })
-    this._window.addBrowserView(this._gameView)
+    this._window.addBrowserView(this._pluginView)
     const size = this._window.getContentSize()
-    this._gameView.setBounds({
+    this._pluginView.setBounds({
       x: 0,
       y: 0,
       width: size[0],
       height: size[1]
     })
-    this._gameView.setAutoResize({
+    this._pluginView.setAutoResize({
       width: true,
       height: true
     })
-    this._gameView.webContents.loadURL(plugin.gamePage)
+    console.log(path.resolve(this._currentPlugin.path, this._currentPlugin.pluginPage))
+    this._pluginView.webContents.loadURL(path.resolve(this._currentPlugin.path, this._currentPlugin.pluginPage))
+  }
+
+  calculateGameViewPosition () {
+    const windows = this._currentPlugin.windows || {}
+    if (windows.saved) {
+      return windows.saved
+    }
+    const winSettings = windows.default || {
+      mode: 'single',
+      position: 'TL',
+      width: 200,
+      height: 200,
+      margin: 0,
+      x: 0,
+      y: 0
+    }
+    switch (winSettings.position) {
+      case 'TL':
+        winSettings.x = 0
+        winSettings.y = 0
+        break
+    }
+
+    return winSettings
+  }
+
+  startGame () {
+    if (this._gameView !== null) return
+    const ses = session.fromPartition(`persist:plugin_${this._currentPlugin.name}`)
+
+    this._gameView = new BrowserView({
+      webPreferences: {
+        preload: path.resolve(__dirname, '..', 'preload', 'preload_game.js'),
+        nodeIntegration: false,
+        nodeIntegrationInWorker: false,
+        contextIsolation: true,
+        enableRemoteModule: true,
+        session: ses,
+        webviewTag: true
+      }
+    })
+    this._window.addBrowserView(this._gameView)
+    this._gameView.setBounds(this.calculateGameViewPosition())
+    // this._gameView.setAutoResize({
+    //   width: true,
+    //   height: true
+    // })
+    this._gameView.webContents.loadURL(this._currentPlugin.gamePage)
   }
 }
 
