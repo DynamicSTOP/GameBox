@@ -31,13 +31,17 @@
       })
 
       const oReq = new XMLHttpRequest()
+
       function requestFinished () {
         console.log('page callback for XMLHttpRequest load event')
         document.querySelector('#data').innerHTML = oReq.response
       }
+
       oReq.addEventListener('load', requestFinished)
       oReq.open('GET', './data.json')
       oReq.send()
+
+      document.querySelector('#image2').src = './image_2.png?' + new Date().getTime()
     }
 
     document.addEventListener('DOMContentLoaded', pageIsReady)
@@ -47,6 +51,11 @@
 <body>
 <p id="foo"></p>
 <p id="data"></p>
+<p>image 1</p>
+<img src="./image_1.png">
+
+<p>image 2 (added by script)</p>
+<img id="image2">
 
 <p>Aptent dis rutrum elit congue orci praesent integer eu dolor, velit proin. Arcu est condimentum duis suspendisse
   proin quisque class auctor. Convallis est dui ridiculus scelerisque rutrum venenatis gravida magna varius. Consequat
