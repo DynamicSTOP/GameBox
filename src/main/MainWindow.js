@@ -1,6 +1,7 @@
 import { ipcMain, dialog, globalShortcut, BrowserWindow, BrowserView, session } from 'electron'
 import path from 'path'
 import fs from 'fs'
+import cdp from './CDP'
 
 const configPath = path.resolve('./', 'config.json')
 
@@ -324,6 +325,7 @@ class MainWindow {
 
   startGame () {
     if (this._gameView !== null) return
+    if (this._pluginView === null) return
     const ses = session.fromPartition(`persist:plugin_${this._currentPlugin.name}`)
 
     this._gameView = new BrowserView({
@@ -337,6 +339,7 @@ class MainWindow {
         webviewTag: true
       }
     })
+    cdp.attach(this._gameView)
     this._window.addBrowserView(this._gameView)
     this._gameView.setBounds(this.calculateGameViewPosition())
     // this._gameView.setAutoResize({
