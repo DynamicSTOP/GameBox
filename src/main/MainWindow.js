@@ -139,7 +139,7 @@ class MainWindow {
       case 'PRELOADER_PLUGIN_DOM_READY':
         setTimeout(() => {
           this.startGame()
-        }, 5000)
+        }, 1500)
         break
       default:
         if (this._debug) {
@@ -340,6 +340,7 @@ class MainWindow {
       }
     })
     cdp.attach(this._gameView)
+    cdp.loadFilters(this._currentPlugin.networkFilters || {})
     this._window.addBrowserView(this._gameView)
     this._gameView.setBounds(this.calculateGameViewPosition())
     // this._gameView.setAutoResize({

@@ -23,8 +23,15 @@
       "margin": 0
     }
   },
-  "network": true,
-  "cache": true,
+  "networkFilters": {
+    "request": ["/test/po.*$"],
+    "response": ["/test/post$", "data.json"],
+    "headers": true,
+    "blacklistParams": ["api_key"]
+  },
+  "cache": {
+    "urls": ["*"]
+  },
   "gamePage": "https://kc-db.info/test/index.html",
   "pluginPage": "./test.html"
 }

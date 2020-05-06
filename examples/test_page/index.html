@@ -41,6 +41,12 @@
       oReq.open('GET', './data.json')
       oReq.send()
 
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", '/test/post', true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      oReq.addEventListener('load', requestFinished)
+      xhr.send("foo=bar&lorem=ipsum");
+
       document.querySelector('#image2').src = './image_2.png?' + new Date().getTime()
     }
 
