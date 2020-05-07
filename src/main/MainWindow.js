@@ -16,6 +16,9 @@ class MainWindow {
     this._gameView = null
     this._pluginView = null
     this._currentPlugin = null
+
+    cdp.on('Request', console.log)
+    cdp.on('Response', console.log)
   }
 
   create () {

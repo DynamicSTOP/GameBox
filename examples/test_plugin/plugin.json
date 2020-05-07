@@ -24,13 +24,24 @@
     }
   },
   "networkFilters": {
-    "request": ["/test/po.*$"],
-    "response": ["/test/post$", "data.json"],
-    "headers": true,
-    "blacklistParams": ["api_key"]
+    "request": [
+      "/test/po.*$"
+    ],
+    "response": [
+      "/test/post$",
+      "data.json"
+    ],
+    "headers": [
+      "origin",
+      "content-type",
+      "date"
+    ]
   },
   "cache": {
-    "urls": ["*"]
+    "GET": [
+      "*"
+    ],
+    "POST": false
   },
   "gamePage": "https://kc-db.info/test/index.html",
   "pluginPage": "./test.html"
