@@ -91,6 +91,18 @@ class CDP extends EventEmitter {
     return filteredHeaders
   }
 
+  getPostData (request) {
+    const post = {
+      data: request.postData,
+      type: null
+    }
+    const keys = Object.keys(request.headers).filter((k) => k.toLowerCase() === 'content-type')
+    if (keys.length) {
+      post.type = request.headers[keys[0]]
+    }
+    return post
+  }
+
   testRequest (params = {}) {
     const requestType = params.responseHeaders ? 'Response' : 'Request'
     if (requestType === 'Request' && this.filters.request !== false) {
@@ -105,13 +117,17 @@ class CDP extends EventEmitter {
       if (this.filters.response === true || this.filters.response.some(r => r.test(params.request.url))) {
         this._debugger.sendCommand('Fetch.getResponseBody', { requestId: params.requestId })
           .then((result) => {
-            this.emit('Response', {
+            const responseDetails = {
               method: params.request.method,
               url: params.request.url,
               headers: this.filterHeaders(params.request.headers),
               responseHeaders: this.filterHeaders(params.responseHeaders),
               response: result
-            })
+            }
+            if (responseDetails.method === 'POST') {
+              responseDetails.post = this.getPostData(params.request)
+            }
+            this.emit('Response', responseDetails)
           })
       }
     }
