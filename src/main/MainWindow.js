@@ -1,7 +1,7 @@
 import { ipcMain, dialog, globalShortcut, BrowserWindow, BrowserView, session } from 'electron'
 import path from 'path'
 import fs from 'fs'
-import cdp from './CDP'
+import networkWatcher from './NetworkWatcher'
 
 const configPath = path.resolve('./', 'config.json')
 
@@ -17,8 +17,8 @@ class MainWindow {
     this._pluginView = null
     this._currentPlugin = null
 
-    cdp.on('Request', console.log)
-    cdp.on('Response', console.log)
+    networkWatcher.on('Request', console.log)
+    networkWatcher.on('Response', console.log)
   }
 
   create () {
@@ -342,8 +342,8 @@ class MainWindow {
         webviewTag: true
       }
     })
-    cdp.attach(this._gameView)
-    cdp.loadFilters(this._currentPlugin.networkFilters || {})
+    networkWatcher.attach(this._gameView)
+    networkWatcher.loadWatcherRules(this._currentPlugin.networkWatcherRules || {})
     this._window.addBrowserView(this._gameView)
     this._gameView.setBounds(this.calculateGameViewPosition())
     // this._gameView.setAutoResize({

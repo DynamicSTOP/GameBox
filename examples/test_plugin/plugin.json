@@ -23,7 +23,7 @@
       "margin": 0
     }
   },
-  "networkFilters": {
+  "networkWatcherRules": {
     "request": [
       "/test/po.*$"
     ],

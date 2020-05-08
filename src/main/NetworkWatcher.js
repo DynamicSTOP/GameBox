@@ -1,13 +1,13 @@
 // https://chromedevtools.github.io/devtools-protocol/tot/Fetch/
 import EventEmitter from 'events'
 
-class CDP extends EventEmitter {
+class NetworkWatcher extends EventEmitter {
   constructor (props) {
     super(props)
     this._view = null
     this._debugger = null
     this._debug = process.env.NODE_ENV === 'development'
-    this.loadFilters()
+    this.loadWatcherRules()
   }
 
   attach (view) {
@@ -34,41 +34,41 @@ class CDP extends EventEmitter {
     }
   }
 
-  loadFilters (filters = {}) {
-    this.filters = {
+  loadWatcherRules (rules = {}) {
+    this.watcherRules = {
       request: false,
       response: false,
       headers: false
     }
-    Object.assign(this.filters, filters)
-    this.validateFilters()
+    Object.assign(this.watcherRules, rules)
+    this.validateWatcherRules()
   }
 
-  validateFilters () {
-    const checkFilter = (filterGroup, asRegexp = false, toLower) => {
-      if (filterGroup instanceof Array) {
-        filterGroup = filterGroup.filter((r) => typeof r === 'string').filter((r) => r.length > 0)
+  validateWatcherRules () {
+    const checkRule = (rulesGroup, asRegexp = false, toLower) => {
+      if (rulesGroup instanceof Array) {
+        rulesGroup = rulesGroup.filter((r) => typeof r === 'string').filter((r) => r.length > 0)
         if (toLower) {
-          filterGroup = filterGroup.map((r) => r.toLowerCase())
+          rulesGroup = rulesGroup.map((r) => r.toLowerCase())
         }
         if (asRegexp) {
-          filterGroup = filterGroup.map((r) => new RegExp(r))
+          rulesGroup = rulesGroup.map((r) => new RegExp(r))
         }
-        if (filterGroup.length === 0) {
-          filterGroup = false
+        if (rulesGroup.length === 0) {
+          rulesGroup = false
         }
-      } else if (filterGroup !== true) {
-        filterGroup = false
+      } else if (rulesGroup !== true) {
+        rulesGroup = false
       }
-      return filterGroup
+      return rulesGroup
     }
-    this.filters.request = checkFilter(this.filters.request, true)
-    this.filters.response = checkFilter(this.filters.response, true)
-    this.filters.headers = checkFilter(this.filters.headers, false, true)
+    this.watcherRules.request = checkRule(this.watcherRules.request, true)
+    this.watcherRules.response = checkRule(this.watcherRules.response, true)
+    this.watcherRules.headers = checkRule(this.watcherRules.headers, false, true)
   }
 
   filterHeaders (headers) {
-    if (this.filters.headers === false) {
+    if (this.watcherRules.headers === false) {
       return {}
     }
 
@@ -76,14 +76,14 @@ class CDP extends EventEmitter {
     if (headers instanceof Array) {
       // response is like this { name: 'status', value: '200' },
       headers.map((oldHeader) => {
-        if (this.filters.headers === true || this.filters.headers.indexOf(oldHeader.name.toLowerCase()) !== -1) {
+        if (this.watcherRules.headers === true || this.watcherRules.headers.indexOf(oldHeader.name.toLowerCase()) !== -1) {
           filteredHeaders[oldHeader.name.toLowerCase()] = oldHeader.value
         }
       })
       return filteredHeaders
     } else if (typeof headers === 'object') {
       Object.keys(headers).map((oldHeader) => {
-        if (this.filters.headers === true || this.filters.headers.indexOf(oldHeader.toLowerCase()) !== -1) {
+        if (this.watcherRules.headers === true || this.watcherRules.headers.indexOf(oldHeader.toLowerCase()) !== -1) {
           filteredHeaders[oldHeader.toLowerCase()] = headers[oldHeader]
         }
       })
@@ -105,16 +105,16 @@ class CDP extends EventEmitter {
 
   testRequest (params = {}) {
     const requestType = params.responseHeaders ? 'Response' : 'Request'
-    if (requestType === 'Request' && this.filters.request !== false) {
-      if (this.filters.request === true || this.filters.request.some(r => r.test(params.request.url))) {
+    if (requestType === 'Request' && this.watcherRules.request !== false) {
+      if (this.watcherRules.request === true || this.watcherRules.request.some(r => r.test(params.request.url))) {
         this.emit('Request', {
           method: params.request.method,
           url: params.request.url,
           headers: this.filterHeaders(params.request.headers)
         })
       }
-    } else if (this.filters.response !== false) { // Response
-      if (this.filters.response === true || this.filters.response.some(r => r.test(params.request.url))) {
+    } else if (this.watcherRules.response !== false) { // Response
+      if (this.watcherRules.response === true || this.watcherRules.response.some(r => r.test(params.request.url))) {
         this._debugger.sendCommand('Fetch.getResponseBody', { requestId: params.requestId })
           .then((result) => {
             const responseDetails = {
@@ -153,5 +153,5 @@ class CDP extends EventEmitter {
   }
 }
 
-const cdp = new CDP()
-export default cdp
+const nw = new NetworkWatcher()
+export default nw
