@@ -37,9 +37,10 @@
       "date"
     ]
   },
-  "cache": {
+  "networkCacheRules": {
     "GET": [
-      "*"
+      ".json",
+      ".png"
     ],
     "POST": false
   },

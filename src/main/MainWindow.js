@@ -197,7 +197,7 @@ class MainWindow {
   }
 
   saveConfig () {
-    return fs.writeFileSync(configPath, JSON.stringify(this._config), { encoding: 'UTF8' })
+    return fs.writeFileSync(configPath, JSON.stringify(this._config), 'utf8')
   }
 
   sendConfigToRenderer () {
@@ -298,7 +298,6 @@ class MainWindow {
       width: true,
       height: true
     })
-    console.log(path.resolve(this._currentPlugin.path, this._currentPlugin.pluginPage))
     this._pluginView.webContents.loadURL(path.resolve(this._currentPlugin.path, this._currentPlugin.pluginPage))
   }
 
@@ -343,7 +342,7 @@ class MainWindow {
       }
     })
     networkWatcher.attach(this._gameView)
-    networkWatcher.loadWatcherRules(this._currentPlugin.networkWatcherRules || {})
+    networkWatcher.loadSettingsFromPlugin(this._currentPlugin)
     this._window.addBrowserView(this._gameView)
     this._gameView.setBounds(this.calculateGameViewPosition())
     // this._gameView.setAutoResize({
