@@ -3,7 +3,7 @@
   const { ipcRenderer } = require('electron')
 
   ipcRenderer.on('async-main-message', (event, message) => {
-    console.log('preloader passing message from main')
+    console.log('preloader passing message from main', message)
     window.postMessage(message, '*')
   })
 

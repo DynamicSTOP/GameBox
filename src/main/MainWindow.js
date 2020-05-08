@@ -17,8 +17,10 @@ class MainWindow {
     this._pluginView = null
     this._currentPlugin = null
 
-    networkWatcher.on('Request', console.log)
-    networkWatcher.on('Response', console.log)
+    networkWatcher.on('Request', (data) => this.sendToPlugin('Request', data))
+    networkWatcher.on('Response', (data) => this.sendToPlugin('Response', data))
+    // networkWatcher.on('Request', (data) => console.log('Request', data.url))
+    // networkWatcher.on('Response', (data) => console.log('Response', data.url))
   }
 
   create () {
@@ -183,6 +185,16 @@ class MainWindow {
         type,
         data
       }))
+    }
+  }
+
+  sendToPlugin (type, data) {
+    if (this._pluginView) {
+      this._pluginView.webContents.send('async-main-message', {
+        sender: 'main',
+        type,
+        data
+      })
     }
   }
 

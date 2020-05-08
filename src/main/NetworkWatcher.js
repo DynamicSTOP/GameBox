@@ -148,23 +148,24 @@ class NetworkWatcher extends EventEmitter {
     }
   }
 
-  emitResponse (method, url, headers, responseHeaders, requestId, postData) {
-    if (this.watcherRules.response !== false) { // Response
+  async emitResponse (method, url, headers, responseHeaders, requestId, postData, responseData = false) {
+    if (this.watcherRules.response !== false) {
       if (this.watcherRules.response === true || this.watcherRules.response.some(r => r.test(url))) {
-        this._debugger.sendCommand('Fetch.getResponseBody', { requestId })
-          .then((result) => {
-            const responseDetails = {
-              method,
-              url,
-              headers: this.filterHeaders(headers),
-              responseHeaders: this.filterHeaders(responseHeaders),
-              response: result
-            }
-            if (method === 'POST') {
-              responseDetails.post = this.getPostData(postData, headers)
-            }
-            this.emit('Response', responseDetails)
-          })
+        const responseDetails = {
+          method,
+          url,
+          headers: this.filterHeaders(headers),
+          responseHeaders: this.filterHeaders(responseHeaders)
+        }
+        if (responseData) {
+          responseDetails.result = responseData
+        } else {
+          responseDetails.result = await this._debugger.sendCommand('Fetch.getResponseBody', { requestId })
+        }
+        if (method === 'POST') {
+          responseDetails.post = this.getPostData(postData, headers)
+        }
+        this.emit('Response', responseDetails)
       }
     }
   }
@@ -268,12 +269,17 @@ class NetworkWatcher extends EventEmitter {
           const cached = this.loadFromCache(method, url)
           if (cached) {
             console.log('served from cache', url)
-            return this._debugger.sendCommand('Fetch.fulfillRequest', {
+            this._debugger.sendCommand('Fetch.fulfillRequest', {
               requestId,
               responseCode: 200,
               responseHeaders: cached.headers,
               body: cached.body
             })
+            this.emitResponse(method, url, headers, responseHeaders, requestId, postData, {
+              base64Encoded: true,
+              body: cached.body
+            })
+            return
           }
         } else {
           this.emitResponse(method, url, headers, responseHeaders, requestId, postData)
