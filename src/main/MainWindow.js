@@ -4,6 +4,7 @@ import fs from 'fs'
 import networkWatcher from './NetworkWatcher'
 
 const configPath = path.resolve('./', 'config.json')
+const preloadPath = process.env.NODE_ENV === 'production' ? path.resolve(__dirname, 'preload') : path.resolve(__dirname, '..', 'preload')
 
 class MainWindow {
   constructor () {
@@ -37,7 +38,7 @@ class MainWindow {
       width: 1200,
       height: 800,
       webPreferences: {
-        preload: path.resolve(__dirname, '..', 'preload', 'preload.js'),
+        preload: path.resolve(preloadPath, 'preload.js'),
         nodeIntegration: false,
         nodeIntegrationInWorker: false,
         contextIsolation: true,
@@ -289,7 +290,7 @@ class MainWindow {
 
     this._pluginView = new BrowserView({
       webPreferences: {
-        preload: path.resolve(__dirname, '..', 'preload', 'preload_plugin.js'),
+        preload: path.resolve(preloadPath, 'preload_plugin.js'),
         nodeIntegration: false,
         nodeIntegrationInWorker: false,
         contextIsolation: true,
@@ -344,7 +345,7 @@ class MainWindow {
 
     this._gameView = new BrowserView({
       webPreferences: {
-        preload: path.resolve(__dirname, '..', 'preload', 'preload_game.js'),
+        preload: path.resolve(preloadPath, 'preload_game.js'),
         nodeIntegration: false,
         nodeIntegrationInWorker: false,
         contextIsolation: true,

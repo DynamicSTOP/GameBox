@@ -2,17 +2,17 @@
   "name": "gamebox",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "dist/main.js",
   "scripts": {
     "start": "electron .",
-    "dev": "node .builders/dev.js"
+    "dev": "node .builders/dev.js",
+    "build": "node .builders/build.js && electron-builder"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [],
   "author": "GitHub",
   "license": "MIT",
   "dependencies": {
-    "electron": "^8.2.3",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6",
     "vuex": "^3.2.0"
@@ -26,7 +26,10 @@
     "babel-loader": "^8.1.0",
     "babili-webpack-plugin": "^0.1.2",
     "chalk": "^4.0.0",
+    "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.5.2",
+    "electron": "^8.2.3",
+    "electron-builder": "^22.6.0",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-friendly-formatter": "^4.0.1",
@@ -51,5 +54,15 @@
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
+  },
+  "build": {
+    "productName": "gamebox",
+    "appId": "com.example.gamebox",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/**/*"
+    ]
   }
 }

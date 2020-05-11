@@ -1,11 +1,13 @@
 const path = require('path')
+const fs = require('fs')
 
 const { VueLoaderPlugin } = require('vue-loader')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
-module.exports = {
+const config = {
   entry: './src/renderer/index.js',
   mode: 'development',
   //target: 'electron-renderer',
@@ -118,7 +120,10 @@ module.exports = {
     new MiniCssExtractPlugin({ filename: 'styles.css' }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: path.resolve(__dirname, '..', 'src', 'renderer', 'index.html'),
+      templateContent: () => {
+        // for some reason it crashes if you use simple template path on win 10
+        return fs.readFileSync(path.resolve(__dirname, '..', 'src', 'renderer', 'index.html'), 'utf8')
+      },
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
@@ -130,3 +135,13 @@ module.exports = {
     })
   ]
 }
+if (process.env.NODE_ENV === 'production') {
+  config.plugins.push(new CopyPlugin([
+      {
+        from: path.resolve(__dirname, '..', 'src', 'preload'),
+        to: 'preload'
+      }]
+  ))
+}
+
+module.exports = config
